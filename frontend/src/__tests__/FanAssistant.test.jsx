@@ -31,6 +31,7 @@ describe('FanAssistant - Rendering', () => {
   it('should render the welcome message', () => {
     renderFanAssistant();
     expect(screen.getByText(/Welcome to TournamentPulse AI/i)).toBeInTheDocument();
+    expect(screen.getByRole('article', { name: /assistant response/i })).toBeInTheDocument();
   });
 
   it('should render the chat input', () => {
@@ -209,5 +210,20 @@ describe('FanAssistant - Accessibility', () => {
     renderFanAssistant();
     const group = screen.getByRole('group', { name: /quick prompts/i });
     expect(group).toBeInTheDocument();
+  });
+
+  it('should expose the user message as a labeled article', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ summary: 'Response', handoff_required: false }),
+    });
+
+    renderFanAssistant();
+    fireEvent.change(screen.getByLabelText(/type your message/i), { target: { value: 'Need water' } });
+    fireEvent.click(screen.getByLabelText('Send message'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('article', { name: 'Your message' })).toHaveTextContent('Need water');
+    });
   });
 });

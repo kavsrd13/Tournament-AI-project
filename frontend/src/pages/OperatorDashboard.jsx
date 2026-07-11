@@ -80,7 +80,7 @@ export default function OperatorDashboard() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <section className="col-span-2 space-y-6" aria-label="Zone telemetry">
+        <section className="col-span-2 space-y-6" aria-label="Zone telemetry" aria-busy={loading}>
           <div className="grid grid-cols-2 gap-4" role="list" aria-live="polite">
             {telemetry.map((item) => <TelemetryCard key={item.zoneId} telemetry={item} zoneName={getZoneName(zones, item.zoneId)} />)}
           </div>

@@ -5,7 +5,10 @@ export default function ChatMessage({ message }) {
   const isUser = message.sender === 'user';
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <article
+      aria-label={isUser ? 'Your message' : 'TournamentPulse assistant response'}
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+    >
       <div className={`max-w-[80%] rounded-2xl p-4 ${isUser ? 'bg-primary text-white' : 'bg-surface-dim text-gray-800'}`}>
         <p className="break-words">{message.text}</p>
         {message.action && (
@@ -21,6 +24,6 @@ export default function ChatMessage({ message }) {
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

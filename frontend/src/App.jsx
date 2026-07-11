@@ -51,7 +51,7 @@ function App() {
             </nav>
           </header>
 
-          <main id="main-content" role="main" className="flex-1 flex flex-col relative overflow-hidden">
+          <main id="main-content" role="main" tabIndex={-1} className="flex-1 flex flex-col relative overflow-hidden">
             <Routes>
               <Route path="/" element={<OperatorDashboard />} />
               <Route path="/operator" element={<OperatorDashboard />} />

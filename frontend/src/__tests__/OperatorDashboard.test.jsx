@@ -63,6 +63,14 @@ describe('OperatorDashboard - Rendering', () => {
     expect(screen.getByText(/loading dashboard data/i)).toBeInTheDocument();
   });
 
+  it('should show a retryable alert when the snapshot request fails', async () => {
+    mockFetch.mockRejectedValueOnce(new Error('Network unavailable'));
+    renderDashboard();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/dashboard unavailable/i);
+    expect(screen.getByRole('button', { name: /retry connection/i })).toBeEnabled();
+  });
+
   it('should render Command Center title after loading', async () => {
     renderDashboard();
     await waitFor(() => {
@@ -147,6 +155,7 @@ describe('OperatorDashboard - Accessibility', () => {
     await waitFor(() => {
       const section = screen.getByLabelText(/zone telemetry/i);
       expect(section).toBeInTheDocument();
+      expect(section).toHaveAttribute('aria-busy', 'false');
     });
   });
 

@@ -39,6 +39,7 @@ class ErrorBoundary extends React.Component {
               The application encountered an unexpected error. Please refresh the page to try again.
             </p>
             <button
+              type="button"
               onClick={() => window.location.reload()}
               className="bg-primary hover:bg-primary-container text-white px-6 py-3 rounded-xl font-medium transition-colors"
             >

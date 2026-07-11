@@ -27,4 +27,12 @@ describe('App routing', () => {
       expect(screen.getByText('Operator dashboard content')).toBeInTheDocument();
     });
   });
+
+  it('provides a focusable target for the skip link', () => {
+    render(<App />);
+
+    expect(screen.getByRole('main')).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('link', { name: /skip to main content/i }))
+      .toHaveAttribute('href', '#main-content');
+  });
 });
