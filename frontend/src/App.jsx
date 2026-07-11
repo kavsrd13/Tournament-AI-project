@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, NavLink } from 'react-router-dom';
 import OperatorDashboard from './pages/OperatorDashboard';
 import FanAssistant from './pages/FanAssistant';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -56,6 +56,7 @@ function App() {
               <Route path="/" element={<OperatorDashboard />} />
               <Route path="/operator" element={<OperatorDashboard />} />
               <Route path="/fan" element={<FanAssistant />} />
+              <Route path="*" element={<Navigate to="/operator" replace />} />
             </Routes>
           </main>
         </div>

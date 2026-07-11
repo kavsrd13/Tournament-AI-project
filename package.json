@@ -2,6 +2,15 @@
   "name": "tournamentpulse-ai",
   "version": "1.0.0",
   "description": "GenAI command center and fan assistant for FIFA World Cup 2026 smart stadium operations",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kavsrd13/Tournament-AI-project.git"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
@@ -13,7 +22,8 @@
     "lint": "npm run lint --prefix frontend",
     "build": "npm run build --prefix frontend",
     "check:submission": "node scripts/check-submission.js",
-    "quality": "npm run test:all && npm run lint && npm run build && npm run check:submission"
+    "quality": "npm run test:all && npm run lint && npm run build && npm run check:submission",
+    "ci": "npm run quality"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "TournamentPulse AI backend — Express API server with AI-powered stadium operations",
   "main": "src/server.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "start": "node src/server.js",
     "test": "vitest run",
@@ -10,8 +14,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "keywords": ["stadium", "ai", "operations", "fifa"],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
