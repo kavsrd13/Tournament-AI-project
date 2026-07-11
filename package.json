@@ -19,10 +19,11 @@
     "test": "npm test --prefix backend",
     "test:frontend": "npm test --prefix frontend",
     "test:all": "npm run test && npm run test:frontend",
+    "test:coverage": "npm run test:coverage --prefix backend && npm run test:coverage --prefix frontend",
     "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
     "build": "npm run build --prefix frontend",
     "check:submission": "node scripts/check-submission.js",
-    "quality": "npm run test:all && npm run lint && npm run build && npm run check:submission",
+    "quality": "npm run test:coverage && npm run lint && npm run build && npm run check:submission",
     "ci": "npm run quality"
   },
   "devDependencies": {
