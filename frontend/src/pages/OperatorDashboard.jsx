@@ -41,11 +41,24 @@ export default function OperatorDashboard() {
     }
   };
 
-  if (loading || !snapshot) {
+  if (loading && !snapshot) {
     return (
       <div className="p-8 text-center" role="status" aria-live="polite">
         <RefreshCw className="w-8 h-8 mx-auto mb-4 text-primary animate-spin" aria-hidden="true" />
         <p className="text-gray-600 font-medium">Loading dashboard data...</p>
+      </div>
+    );
+  }
+
+  if (!snapshot) {
+    return (
+      <div className="p-8 text-center" role="alert">
+        <AlertTriangle className="w-8 h-8 mx-auto mb-4 text-error" aria-hidden="true" />
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Dashboard unavailable</h2>
+        <p className="text-gray-600 mb-4">{error || 'The stadium data service did not respond.'}</p>
+        <button type="button" onClick={() => refresh()} className="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-xl font-medium">
+          Retry connection
+        </button>
       </div>
     );
   }
