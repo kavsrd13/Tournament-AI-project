@@ -1,0 +1,6 @@
+[
+  { "zoneId": "zone_north", "densityPercent": 72, "queueLength": 45, "waitTimeMinutes": 8, "incidentFlag": false, "trend": "increasing" },
+  { "zoneId": "zone_south", "densityPercent": 35, "queueLength": 12, "waitTimeMinutes": 2, "incidentFlag": false, "trend": "stable" },
+  { "zoneId": "zone_east", "densityPercent": 55, "queueLength": 28, "waitTimeMinutes": 5, "incidentFlag": false, "trend": "increasing" },
+  { "zoneId": "zone_exterior", "densityPercent": 20, "queueLength": 5, "waitTimeMinutes": 1, "incidentFlag": false, "trend": "decreasing" }
+]

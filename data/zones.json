@@ -1,0 +1,34 @@
+[
+  {
+    "zoneId": "zone_north",
+    "name": "North Concourse",
+    "type": "concourse",
+    "capacity": 5000,
+    "amenities": ["refill_point_a", "restroom_north", "first_aid"],
+    "accessibilityFeatures": ["elevators", "ramps", "tactile_paving"]
+  },
+  {
+    "zoneId": "zone_south",
+    "name": "South Concourse",
+    "type": "concourse",
+    "capacity": 4500,
+    "amenities": ["refill_point_b", "restroom_south"],
+    "accessibilityFeatures": ["elevators", "ramps"]
+  },
+  {
+    "zoneId": "zone_east",
+    "name": "East Concourse",
+    "type": "concourse",
+    "capacity": 4000,
+    "amenities": ["food_court"],
+    "accessibilityFeatures": ["ramps", "wide_corridors"]
+  },
+  {
+    "zoneId": "zone_exterior",
+    "name": "Exterior Plaza",
+    "type": "plaza",
+    "capacity": 15000,
+    "amenities": [],
+    "accessibilityFeatures": ["smooth_paving", "curb_cuts"]
+  }
+]

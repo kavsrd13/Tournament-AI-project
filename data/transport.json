@@ -1,0 +1,9 @@
+{
+  "shuttleLoad": 60,
+  "trainLoad": 80,
+  "parkingLoad": 95,
+  "transitLinks": [
+    "transit_link_b"
+  ],
+  "recommendedDepartureWindow": "22:00 - 23:00"
+}

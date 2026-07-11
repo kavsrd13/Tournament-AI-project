@@ -1,0 +1,12 @@
+{
+  "binFillPercent": {
+    "zone_north": 45,
+    "zone_exterior": 30
+  },
+  "waterRefillAvailability": {
+    "refill_point_b": "operational"
+  },
+  "energyLoad": 75,
+  "transitShare": 68,
+  "sustainabilityScore": 85
+}

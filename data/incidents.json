@@ -1,0 +1,9 @@
+[
+  {
+    "scenario": "gate_closure",
+    "affectedZone": "zone_north",
+    "severity": "high",
+    "operationalImpact": "Gate B closed. Reroute via Gate A.",
+    "recommendedAction": "open_lane"
+  }
+]
