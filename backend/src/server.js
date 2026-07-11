@@ -8,6 +8,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -49,6 +50,20 @@ app.get('/api/health', (req, res) => {
 
 const apiRoutes = require('./routes/apiRoutes');
 app.use('/api', apiRoutes);
+
+// ─── Frontend Static Serving ────────────────────────────────────────
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Catch-all route to serve index.html for client-side routing (React Router)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  } else {
+    next();
+  }
+});
 
 // ─── Global Error Handler ───────────────────────────────────────────
 

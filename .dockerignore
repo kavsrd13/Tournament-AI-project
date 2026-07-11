@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+.DS_Store
+
+# Exclude test files
+**/*.test.js
+**/*.test.jsx
+__tests__
+
+# Build outputs
+frontend/dist
+backend/public

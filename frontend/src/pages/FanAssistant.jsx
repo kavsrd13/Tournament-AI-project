@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Accessibility, ShieldCheck, MapPin } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export default function FanAssistant() {
   const [messages, setMessages] = useState([
@@ -132,14 +132,14 @@ export default function FanAssistant() {
           {messages.map(msg => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl p-4 ${msg.sender === 'user' ? 'bg-primary text-white' : 'bg-surface-dim text-gray-800'}`}>
-                <p>{msg.text}</p>
+                <p className="break-words">{msg.text}</p>
                 {msg.action && (
                   <div className="mt-3 bg-white/50 rounded-lg p-3 border border-white/20">
                     <p className="text-sm font-bold flex items-center gap-2 mb-1">
                       <MapPin size={14} aria-hidden="true" /> Recommendation
                     </p>
-                    <p className="text-sm">{msg.action}</p>
-                    {msg.reason && <p className="text-xs text-gray-500 mt-1 italic">{msg.reason}</p>}
+                    <p className="text-sm break-words">{msg.action}</p>
+                    {msg.reason && <p className="text-xs text-gray-500 mt-1 italic break-words">{msg.reason}</p>}
                     {msg.priority && (
                       <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-mono ${
                         msg.priority === 'critical' ? 'bg-red-100 text-red-700' :
@@ -180,8 +180,8 @@ export default function FanAssistant() {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-gray-100">
-          <div className="flex items-center gap-2 max-w-3xl mx-auto">
+        <div className="px-6 py-4 bg-white border-t border-gray-100 shrink-0">
+          <div className="flex items-center gap-2 w-full">
             <label htmlFor="chat-input" className="sr-only">Type your message</label>
             <input
               ref={inputRef}
@@ -192,7 +192,7 @@ export default function FanAssistant() {
               onKeyDown={e => e.key === 'Enter' && sendMessage(input)}
               placeholder="Ask for directions, amenities, or assistance..."
               aria-label="Type your message to the AI assistant"
-              className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+              className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
             />
             <button
               id="btn-send-message"
