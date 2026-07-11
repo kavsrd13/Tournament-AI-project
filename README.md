@@ -74,7 +74,7 @@ ASSISTANT_RATE_LIMIT_PER_MINUTE=20
 npm test                 # backend unit and API/security tests
 npm run test:frontend    # frontend component and accessibility tests
 npm run test:all         # backend + frontend test suites
-npm run lint             # frontend Oxlint
+npm run lint             # backend + frontend static analysis
 npm run build            # production frontend build
 npm run check:submission # branch, size, dependency, and secret hygiene
 npm run quality          # complete local quality gate

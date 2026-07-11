@@ -11,7 +11,8 @@
     "start": "node src/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint": "oxlint src"
   },
   "keywords": ["stadium", "ai", "operations", "fifa"],
   "type": "commonjs",
@@ -25,6 +26,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "oxlint": "^1.71.0",
     "supertest": "^7.1.0",
     "vitest": "^4.1.10"
   }

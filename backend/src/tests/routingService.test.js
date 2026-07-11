@@ -185,6 +185,7 @@ describe('findShortestPath', () => {
     // With crowd avoidance, the route may differ or the time should be different
     expect(avoidCrowds.reason).toContain('congested');
     expect(avoidCrowds.estimatedTimeMinutes).toBeGreaterThanOrEqual(0);
+    expect(avoidCrowds.estimatedTimeMinutes).toBeGreaterThanOrEqual(normal.estimatedTimeMinutes);
   });
 
   it('should include crowd level in response', () => {

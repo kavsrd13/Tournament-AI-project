@@ -1,16 +1,25 @@
-# React + Vite
+# TournamentPulse AI frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+This React and Vite client provides the accessible Fan Assistant and the Venue Operations Command Center.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+From the repository root, run:
 
-## React Compiler
+```bash
+npm run install:all
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Vite runs at `http://localhost:5173` and proxies `/api` requests to the backend at `http://localhost:4000` in local development.
 
-## Expanding the Oxlint configuration
+## Commands
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm run dev --prefix frontend
+npm run test:frontend
+npm run lint --prefix frontend
+npm run build --prefix frontend
+```
+
+The UI keeps network access in `src/services/api.js`, dashboard normalization in `src/utils/dashboard.js`, and polling behavior in `src/hooks/useSnapshotPolling.js`. Components render accessible, semantic states and are covered by component, routing, recovery, and accessibility tests.

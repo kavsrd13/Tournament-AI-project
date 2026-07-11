@@ -4,7 +4,7 @@ WORKDIR /app/frontend
 
 # Copy frontend package files and install dependencies
 COPY frontend/package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy frontend source code and build
 COPY frontend/ ./
@@ -16,7 +16,7 @@ WORKDIR /app/backend
 
 # Copy backend package files and install dependencies
 COPY backend/package*.json ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 # Copy backend source code
 COPY backend/ ./
@@ -31,6 +31,9 @@ COPY --from=frontend-builder /app/frontend/dist /app/backend/public
 EXPOSE 8080
 ENV PORT=8080
 ENV NODE_ENV=production
+
+# The image contains only runtime files; the unprivileged Node user only needs read access.
+USER node
 
 # Start the server
 CMD ["node", "src/server.js"]
