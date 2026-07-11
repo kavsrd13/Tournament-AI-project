@@ -170,6 +170,18 @@ describe('POST /api/operator/action', () => {
       });
     expect(res.status).toBe(400);
   });
+
+  it('should reject a syntactically valid but unknown zone', async () => {
+    const res = await request(app)
+      .post('/api/operator/action')
+      .send({
+        actionType: 'open_lane',
+        zoneId: 'zone_unknown',
+        approvedBy: 'Admin',
+      });
+    expect(res.status).toBe(400);
+    expect(res.body.details[0].field).toBe('zoneId');
+  });
 });
 
 // ─── POST /api/simulate/incident ────────────────────────────────────

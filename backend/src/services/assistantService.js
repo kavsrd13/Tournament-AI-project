@@ -7,15 +7,24 @@
  */
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { z } = require('zod');
+const { generateRuleBasedResponse } = require('./assistantLogic');
+const config = require('../config');
 
 /** Expected schema for AI responses — validated before returning */
 const AIResponseSchema = z.object({
-  summary: z.string().min(1),
-  recommended_action: z.string().default('No specific action required.'),
-  reason: z.string().default(''),
+  summary: z.string().min(1).max(800),
+  recommended_action: z.string().max(500).default('No specific action required.'),
+  reason: z.string().max(800).default(''),
   priority: z.enum(['low', 'medium', 'high', 'critical']).default('low'),
-  accessibility_notes: z.string().default('Follow standard protocols.'),
+  accessibility_notes: z.string().max(500).default('Follow standard protocols.'),
   handoff_required: z.boolean().default(false),
+  source: z.string().max(80).optional(),
+  route: z.object({
+    path: z.array(z.string().max(80)).max(30),
+    distanceMeters: z.number().nonnegative(),
+    estimatedTimeMinutes: z.number().nonnegative(),
+    crowdLevel: z.enum(['low', 'medium', 'high', 'unknown']),
+  }).optional(),
 });
 
 /** Fallback response when AI is unavailable or fails */
@@ -42,15 +51,17 @@ const AI_TIMEOUT_MS = 15000;
  * @returns {Promise<object>} Validated AI response matching AIResponseSchema
  */
 const generateAssistantResponse = async (persona, language, message, context) => {
-  const apiKey = process.env.AI_API_KEY;
+  const apiKey = config.aiApiKey;
 
   if (!apiKey) {
-    return { ...FALLBACK_RESPONSE, reason: 'No AI API key configured.' };
+    return generateRuleBasedResponse(persona, message, context);
   }
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+    const model = genAI.getGenerativeModel({
+      model: config.aiModel,
+    });
 
     // Build prompt with clear boundary markers to prevent injection
     const systemContext = [
@@ -70,7 +81,10 @@ const generateAssistantResponse = async (persona, language, message, context) =>
     ].join('\n');
 
     // Sanitize context to prevent injection via context object
-    const safeContext = JSON.stringify(context).substring(0, 500);
+    const safeContext = JSON.stringify({
+      accessibilityMode: context?.accessibilityMode === true,
+      currentNode: typeof context?.currentNode === 'string' ? context.currentNode : undefined,
+    });
 
     const prompt = `${systemContext}\n\nOperational Context: ${safeContext}\n\nUser Query: ${message}`;
 
@@ -91,17 +105,16 @@ const generateAssistantResponse = async (persona, language, message, context) =>
     text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
 
     // Parse and validate against schema
-    const parsed = JSON.parse(text);
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd <= jsonStart) throw new Error('AI response was not JSON');
+    const parsed = JSON.parse(text.slice(jsonStart, jsonEnd + 1));
     const validated = AIResponseSchema.parse(parsed);
 
     return validated;
   } catch (err) {
     console.error('[AssistantService] AI Error:', err.message);
-    return {
-      ...FALLBACK_RESPONSE,
-      summary: 'AI service encountered an error. Operating in safe fallback mode.',
-      reason: `Error: ${err.name === 'AbortError' ? 'Request timed out' : 'Service temporarily unavailable'}`,
-    };
+    return generateRuleBasedResponse(persona, message, context);
   }
 };
 

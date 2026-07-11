@@ -1,7 +1,7 @@
 /**
  * @file assistantService.test.js
  * @description Unit tests for the AI assistant service.
- * Tests fallback behavior, response schema validation,
+ * Tests grounded fallback behavior, response schema validation,
  * and error handling without requiring a real API key.
  */
 const { generateAssistantResponse, AIResponseSchema, FALLBACK_RESPONSE } = require('../services/assistantService');
@@ -14,13 +14,16 @@ describe('AssistantService - Fallback Mode', () => {
     delete process.env.AI_API_KEY;
   });
 
-  it('should return fallback response when no API key is configured', async () => {
-    const result = await generateAssistantResponse('fan', 'en', 'Find my gate', {});
+  it('should return a grounded local response when no API key is configured', async () => {
+    const result = await generateAssistantResponse('fan', 'en', 'Where is the nearest restroom?', {
+      currentNode: 'gate_a',
+    });
 
     expect(result.summary).toBeTruthy();
-    expect(result.handoff_required).toBe(true);
-    expect(result.reason).toContain('No AI API key');
-    expect(result.priority).toBe('low');
+    expect(result.summary).toContain('Restroom');
+    expect(result.source).toBe('local-stadium-logic');
+    expect(result.handoff_required).toBe(false);
+    expect(result.priority).toBe('high');
   });
 
   it('should include all required fields in fallback response', async () => {
@@ -38,9 +41,18 @@ describe('AssistantService - Fallback Mode', () => {
     const fanResult = await generateAssistantResponse('fan', 'en', 'Help', {});
     const opResult = await generateAssistantResponse('operator', 'en', 'Help', {});
 
-    // Both should return fallback since no API key
-    expect(fanResult.handoff_required).toBe(true);
-    expect(opResult.handoff_required).toBe(true);
+    expect(fanResult.source).toBe('local-stadium-logic');
+    expect(opResult.source).toBe('local-stadium-logic');
+  });
+
+  it('should include route details for a context-aware destination request', async () => {
+    const result = await generateAssistantResponse('fan', 'en', 'Accessible route to Section 104', {
+      accessibilityMode: true,
+      currentNode: 'gate_a',
+    });
+
+    expect(result.route.path).toContain('section_104');
+    expect(result.accessibility_notes).toContain('accessible');
   });
 
   it('should work with different languages in fallback', async () => {

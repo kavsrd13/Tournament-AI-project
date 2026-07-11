@@ -5,6 +5,7 @@
  * `validate()` middleware factory for Express routes.
  */
 const { z } = require('zod');
+const { ACTION_TYPES, INCIDENT_SCENARIOS, LANGUAGES, PERSONAS } = require('../constants');
 
 // ─── Shared Patterns ────────────────────────────────────────────────
 
@@ -22,20 +23,24 @@ const nodeIdPattern = /^[a-z_0-9]+$/;
  * and persona whitelisting.
  */
 const AssistantRequestSchema = z.object({
-  persona: z.enum(['fan', 'operator'], {
+  persona: z.enum(PERSONAS, {
     errorMap: () => ({ message: 'Persona must be "fan" or "operator"' }),
   }),
   language: z
-    .enum(['en', 'es', 'fr', 'de', 'pt', 'ar', 'ja', 'ko', 'zh'], {
+    .enum(LANGUAGES, {
       errorMap: () => ({ message: 'Unsupported language code' }),
     })
     .default('en'),
   message: z
     .string()
-    .min(1, 'Message cannot be empty')
-    .max(500, 'Message must be 500 characters or less')
-    .transform((val) => sanitizeInput(val)),
-  context: z.record(z.unknown()).default({}),
+    .transform((val) => sanitizeInput(val))
+    .pipe(z.string().min(1, 'Message cannot be empty').max(500, 'Message must be 500 characters or less')),
+  context: z.record(z.union([
+    z.string().max(120),
+    z.number().finite(),
+    z.boolean(),
+    z.null(),
+  ])).default({}),
 });
 
 /**
@@ -44,7 +49,7 @@ const AssistantRequestSchema = z.object({
  */
 const OperatorActionSchema = z.object({
   actionType: z.enum(
-    ['open_lane', 'close_gate', 'dispatch_volunteers', 'reroute_traffic', 'escalate'],
+    ACTION_TYPES,
     { errorMap: () => ({ message: 'Invalid action type' }) }
   ),
   zoneId: z
@@ -52,8 +57,8 @@ const OperatorActionSchema = z.object({
     .regex(zoneIdPattern, 'Zone ID must match pattern zone_<name>'),
   approvedBy: z
     .string()
-    .min(1, 'Human approval (approvedBy) is required')
-    .max(100, 'Approver name must be 100 characters or less'),
+    .transform((val) => sanitizeInput(val))
+    .pipe(z.string().min(1, 'Human approval (approvedBy) is required').max(100, 'Approver name must be 100 characters or less')),
 });
 
 /**
@@ -61,7 +66,7 @@ const OperatorActionSchema = z.object({
  */
 const IncidentSchema = z.object({
   scenario: z.enum(
-    ['gate_closure', 'crowd_surge', 'medical_emergency', 'power_outage', 'weather_delay'],
+    INCIDENT_SCENARIOS,
     { errorMap: () => ({ message: 'Invalid incident scenario' }) }
   ),
   zoneId: z

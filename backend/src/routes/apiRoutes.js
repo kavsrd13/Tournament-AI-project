@@ -12,9 +12,8 @@ const {
   getTelemetry,
   getIncidents,
   getSustainability,
-  addIncident,
-  resolveIncidentByAction,
 } = require('../services/dataLoader');
+const { executeApprovedAction, isKnownZone, simulateIncident } = require('../services/operationsService');
 const {
   validate,
   AssistantRequestSchema,
@@ -29,7 +28,9 @@ const {
  * Used by the Operator Dashboard for live telemetry.
  */
 router.get('/snapshot', (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json({
+    updatedAt: new Date().toISOString(),
     zones: getZones(),
     telemetry: getTelemetry(),
     incidents: getIncidents(),
@@ -84,21 +85,14 @@ router.post('/assistant', validate(AssistantRequestSchema), async (req, res, nex
  */
 router.post('/operator/action', validate(OperatorActionSchema), (req, res) => {
   const { actionType, zoneId, approvedBy } = req.body;
-  resolveIncidentByAction(actionType, zoneId);
-  res.json({
-    status: 'success',
-    actionType,
-    zoneId,
-    approvedBy,
-    timestamp: new Date().toISOString(),
-    audit: {
-      action: actionType,
-      zone: zoneId,
-      operator: approvedBy,
-      executedAt: new Date().toISOString(),
-      source: 'human_approved',
-    },
-  });
+  if (!isKnownZone(zoneId)) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: [{ field: 'zoneId', message: 'Zone does not exist in the stadium map.' }],
+    });
+  }
+
+  res.json(executeApprovedAction({ actionType, zoneId, approvedBy }));
 });
 
 /**
@@ -111,27 +105,14 @@ router.post('/operator/action', validate(OperatorActionSchema), (req, res) => {
  */
 router.post('/simulate/incident', validate(IncidentSchema), (req, res) => {
   const { scenario, zoneId } = req.body;
-  
-  const incident = {
-    scenario,
-    affectedZone: zoneId,
-    severity: 'high',
-    operationalImpact: `Simulated impact for ${scenario}. Rerouting recommended.`,
-    recommendedAction: 'open_lane',
-  };
-  addIncident(incident);
 
-  res.json({
-    status: 'simulated',
-    scenario,
-    zoneId,
-    updatedRiskScore: 'high',
-    timestamp: new Date().toISOString(),
-    recommendedActions: [
-      { action: 'dispatch_volunteers', priority: 'high' },
-      { action: 'reroute_traffic', priority: 'medium' },
-    ],
-  });
+  if (!isKnownZone(zoneId)) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: [{ field: 'zoneId', message: 'Zone does not exist in the stadium map.' }],
+    });
+  }
+  res.json(simulateIncident({ scenario, zoneId }));
 });
 
 module.exports = router;

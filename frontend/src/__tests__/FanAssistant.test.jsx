@@ -129,6 +129,23 @@ describe('FanAssistant - Interactions', () => {
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
   });
 
+  it('should send location and accessibility context to the assistant', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ summary: 'Accessible route ready', handoff_required: false }),
+    });
+
+    renderFanAssistant();
+    fireEvent.change(screen.getByLabelText(/select current location/i), { target: { value: 'gate_c' } });
+    fireEvent.click(screen.getByLabelText(/enable accessible routing/i));
+    fireEvent.change(screen.getByLabelText(/type your message/i), { target: { value: 'Section 104' } });
+    fireEvent.click(screen.getByLabelText('Send message'));
+
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
+    const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(requestBody.context).toEqual({ accessibilityMode: true, currentNode: 'gate_c' });
+  });
+
   it('should handle quick prompt clicks', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,

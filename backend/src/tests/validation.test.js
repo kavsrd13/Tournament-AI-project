@@ -52,6 +52,14 @@ describe('AssistantRequestSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should reject a message that becomes empty after sanitization', () => {
+    const result = AssistantRequestSchema.safeParse({
+      persona: 'fan',
+      message: '   <b></b>   ',
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('should reject message exceeding 500 characters', () => {
     const result = AssistantRequestSchema.safeParse({
       persona: 'fan',
